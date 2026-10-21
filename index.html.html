@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agenda CEHAF — Colégio Estadual Heli Alves Ferreira</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --navy-light: #28395E;
+    --navy-pale: #EEF1F6;
+    --gold: #C89B3C;
+    --gold-dark: #A67F2E;
+    --bg: #F6F4EE;
+    --surface: #FFFFFF;
+    --ink: #1C1E26;
+    --muted: #6B6F7D;
+    --border: #E3DFD2;
+    --success: #2E7D5B;
+    --success-bg: #E9F3EE;
+    --danger: #B3413A;
+    --danger-bg: #FBEAE8;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); height: 100%; }
+  body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .display { font-family: 'Fraunces', Georgia, serif; }
+  a { color: inherit; }
+  button { font-family: inherit; cursor: pointer; }
+  input, select, textarea { font-family: inherit; }
+  ::selection { background: var(--gold); color: var(--navy); }
+
+  /* ---------- Layout shell ---------- */
+  #app { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+
+  .topbar {
+    background: var(--navy);
+    color: #fff;
+    padding: 14px 20px;
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .brand-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(155deg, var(--gold) 0%, var(--gold-dark) 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--navy); font-family: 'Fraunces', serif; font-weight: 700; font-size: 17px;
+    flex: none;
+  }
+  .brand-text { min-width: 0; }
+  .brand-text .school-name { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .brand-text .school-sub { font-size: 11.5px; color: rgba(255,255,255,0.62); letter-spacing: .01em; }
+  .topbar-right { display: flex; align-items: center; gap: 14px; flex: none; }
+  .user-chip { display: flex; align-items: center; gap: 9px; }
+  .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--navy-light); border: 1px solid rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 600; }
+  .user-meta { line-height: 1.15; display: none; }
+  .user-meta .u-name { font-size: 13px; font-weight: 600; }
+  .user-meta .u-role { font-size: 11px; color: rgba(255,255,255,0.6); }
+  @media (min-width: 560px) { .user-meta { display: block; } }
+  .icon-btn {
+    background: transparent; border: 1px solid rgba(255,255,255,0.22); color: #fff;
+    width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    transition: background .15s ease;
+  }
+  .icon-btn:hover { background: rgba(255,255,255,0.1); }
+
+  .body-row { display: flex; flex: 1; min-height: 0; }
+
+  .sidebar {
+    width: 232px; flex: none; background: var(--navy);
+    color: rgba(255,255,255,0.86);
+    padding: 18px 12px 24px;
+    display: flex; flex-direction: column; gap: 3px;
+    position: sticky; top: 0; align-self: flex-start;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+  .sidebar { display: none; }
+  @media (min-width: 860px) { .sidebar { display: flex; } .topbar .menu-toggle { display: none; } }
+  .nav-section-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,0.42); padding: 16px 12px 6px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 8px; font-size: 13.5px; font-weight: 500;
+    color: rgba(255,255,255,0.82); text-decoration: none; border: none; background: transparent; width: 100%; text-align: left;
+    transition: background .15s ease, color .15s ease;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+  .nav-item.active { background: var(--gold); color: var(--navy); font-weight: 600; }
+  .nav-item .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .55; flex: none; }
+
+  .mobile-drawer-backdrop { position: fixed; inset: 0; background: rgba(15,20,35,0.5); z-index: 39; opacity: 0; pointer-events: none; transition: opacity .18s ease; }
+  .mobile-drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+  .mobile-drawer { position: fixed; top: 0; left: 0; bottom: 0; width: 250px; background: var(--navy); z-index: 40; transform: translateX(-100%); transition: transform .2s ease; padding: 18px 12px; padding-top: calc(18px + env(safe-area-inset-top,0px)); overflow-y: auto; }
+  .mobile-drawer.open { transform: translateX(0); }
+  @media (min-width: 860px) { .mobile-drawer, .mobile-drawer-backdrop { display: none; } }
+
+  main { flex: 1; min-width: 0; padding: 22px 18px 60px; max-width: 1080px; margin: 0 auto; width: 100%; }
+  @media (min-width: 640px) { main { padding: 30px 32px 70px; } }
+
+  .page-head { margin-bottom: 22px; }
+  .page-head .eyebrow { color: var(--gold-dark); font-size: 12.5px; font-weight: 600; }
+  .page-head h1 { font-size: 26px; margin: 3px 0 6px; color: var(--navy); }
+  .page-head p { margin: 0; color: var(--muted); font-size: 14px; max-width: 60ch; }
+
+  .grid { display: grid; gap: 14px; }
+  .grid-cards { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px;
+  }
+  .stat-card .stat-label { font-size: 12.5px; color: var(--muted); font-weight: 500; }
+  .stat-card .stat-value { font-family: 'Fraunces', serif; font-size: 30px; color: var(--navy); margin-top: 4px; }
+  .stat-card .stat-foot { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  .section-title { font-size: 15.5px; font-weight: 600; color: var(--navy); margin: 30px 0 12px; display: flex; align-items: center; justify-content: space-between; }
+
+  .list-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); }
+  .list-row { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 1px solid var(--border); }
+  .list-row:last-child { border-bottom: none; }
+  .list-row .lr-date { flex: none; width: 54px; text-align: center; }
+  .list-row .lr-date .d-num { font-family: 'Fraunces', serif; font-size: 19px; color: var(--navy); line-height: 1; }
+  .list-row .lr-date .d-mon { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .list-row .lr-body { flex: 1; min-width: 0; }
+  .list-row .lr-title { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .list-row .lr-sub { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+  .empty-state { padding: 28px 16px; text-align: center; color: var(--muted); font-size: 13.5px; }
+
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 100px; }
+  .badge-ok { background: var(--success-bg); color: var(--success); }
+  .badge-cancel { background: var(--danger-bg); color: var(--danger); }
+  .badge-role { background: var(--navy-pale); color: var(--navy); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 10px 18px; border-radius: 9px; font-size: 13.5px; font-weight: 600; border: 1px solid transparent;
+    transition: transform .08s ease, opacity .15s ease, background .15s ease; white-space: nowrap;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--gold); color: var(--navy); }
+  .btn-primary:hover { background: var(--gold-dark); }
+  .btn-navy { background: var(--navy); color: #fff; }
+  .btn-navy:hover { background: var(--navy-light); }
+  .btn-ghost { background: transparent; color: var(--navy); border-color: var(--border); }
+  .btn-ghost:hover { background: var(--navy-pale); }
+  .btn-danger-ghost { background: transparent; color: var(--danger); border-color: var(--danger-bg); }
+  .btn-danger-ghost:hover { background: var(--danger-bg); }
+  .btn-sm { padding: 7px 12px; font-size: 12.5px; border-radius: 7px; }
+  .btn-block { width: 100%; }
+  .btn[disabled] { opacity: .45; pointer-events: none; }
+
+  label.field-label { display: block; font-size: 12.5px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+  .input, select.input, textarea.input {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+    font-size: 14px; background: #fff; color: var(--ink); outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  .input:focus { border-color: var(--gold-dark); box-shadow: 0 0 0 3px rgba(200,155,60,0.18); }
+  .field { margin-bottom: 15px; }
+  .field-hint { font-size: 12px; color: var(--muted); margin-top: 5px; }
+  .field-error { font-size: 12px; color: var(--danger); margin-top: 5px; }
+
+  table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.data-table th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  table.data-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  table.data-table tr:last-child td { border-bottom: none; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: #fff; -webkit-overflow-scrolling: touch; }
+
+  .period-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .period-cell {
+    border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 12px; background: #fff;
+    cursor: pointer; text-align: left; transition: border-color .12s ease, background .12s ease;
+  }
+  .period-cell .pc-label { font-weight: 600; font-size: 13.5px; color: var(--ink); }
+  .period-cell .pc-time { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .period-cell .pc-status { font-size: 11px; margin-top: 7px; font-weight: 600; }
+  .period-cell.free .pc-status { color: var(--success); }
+  .period-cell.busy { background: var(--danger-bg); border-color: transparent; cursor: not-allowed; opacity: .75; }
+  .period-cell.busy .pc-status { color: var(--danger); }
+  .period-cell.selected { border-color: var(--gold-dark); background: #FBF4E4; box-shadow: 0 0 0 3px rgba(200,155,60,0.15); }
+
+  .shift-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--navy); margin: 16px 0 8px; }
+  .shift-label:first-child { margin-top: 0; }
+
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(15,20,35,0.5); display: flex; align-items: flex-end; justify-content: center; z-index: 50; padding: 0; }
+  @media (min-width: 640px) { .modal-backdrop { align-items: center; padding: 20px; } }
+  .modal { background: #fff; width: 100%; max-width: 460px; border-radius: 16px 16px 0 0; padding: 22px; max-height: 88vh; overflow-y: auto; }
+  @media (min-width: 640px) { .modal { border-radius: 14px; } }
+  .modal h3 { margin: 0 0 4px; font-size: 18px; color: var(--navy); }
+  .modal .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .modal-actions .btn { flex: 1; }
+
+  .toast-wrap { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 60; display: flex; flex-direction: column; gap: 8px; width: calc(100% - 32px); max-width: 380px; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .toast { padding: 12px 16px; border-radius: 10px; font-size: 13.5px; font-weight: 500; box-shadow: 0 8px 24px rgba(15,20,35,0.18); display: flex; align-items: center; gap: 9px; animation: toastIn .18s ease; }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+  .toast-ok { background: var(--navy); color: #fff; }
+  .toast-err { background: var(--danger); color: #fff; }
+
+  .login-wrap { min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 20% 15%, #24365c 0%, var(--navy) 55%, #142038 100%); padding: 24px; }
+  .login-card { background: #fff; border-radius: 18px; padding: 34px 28px; width: 100%; max-width: 380px; box-shadow: 0 30px 60px rgba(0,0,0,0.35); }
+  .login-mark { width: 52px; height: 52px; border-radius: 13px; background: linear-gradient(155deg, var(--gold) 0%, var(--gold-dark) 100%); display: flex; align-items: center; justify-content: center; color: var(--navy); font-family: 'Fraunces', serif; font-weight: 700; font-size: 21px; margin-bottom: 16px; }
+  .login-card h1 { font-size: 21px; margin: 0 0 3px; color: var(--navy); line-height: 1.25; }
+  .login-card .login-sub { font-size: 13px; color: var(--muted); margin-bottom: 22px; }
+  .login-demo { margin-top: 20px; padding: 12px 14px; background: var(--navy-pale); border-radius: 10px; font-size: 12px; color: var(--navy); line-height: 1.6; }
+  .login-demo b { font-family: monospace; }
+
+  .switch-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .switch-row:last-child { border-bottom: none; }
+  .pill-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 100px; overflow: hidden; }
+  .pill-toggle button { border: none; background: #fff; padding: 6px 13px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+  .pill-toggle button.active { background: var(--navy); color: #fff; }
+
+  .skeleton { background: linear-gradient(90deg, #ece9de 25%, #f4f2ea 37%, #ece9de 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; border-radius: 8px; }
+  @keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+  .fab { position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom,0px)); z-index: 25; box-shadow: 0 10px 24px rgba(200,155,60,0.4); }
+  @media (min-width: 860px) { .fab { display: none; } }
+
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+  :focus-visible { outline: 2px solid var(--gold-dark); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toastWrap" class="toast-wrap"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   CONFIG — dados institucionais e horários de aula
+   Altere aqui o nome do colégio, cores e periodos conforme necessário.
+   ============================================================ */
+var SCHOOL = {
+  name: "Colégio Estadual Heli Alves Ferreira",
+  shortName: "CEHAF",
+  monogram: "HA",
+  subtitle: "Sistema de Agendamento de Ambientes"
+};
+
+/* ============================================================
+   CONFIGURAÇÃO DO BANCO DE DADOS ONLINE (Firebase / Firestore)
+   Esta versão é feita para ser hospedada fora do claude.ai (ex: GitHub
+   Pages), por isso usa o Firebase — gratuito no plano "Spark" — para
+   que os agendamentos fiquem sincronizados entre todos os aparelhos.
+
+   COMO OBTER ESSES VALORES (uma vez só):
+   1. Acesse https://console.firebase.google.com e crie um projeto
+      (gratuito).
+   2. No menu lateral, abra "Compilação" > "Firestore Database" e
+      clique em "Criar banco de dados" (modo produção, qualquer região).
+   3. Ainda no menu lateral, abra "Compilação" > "Authentication" >
+      aba "Sign-in method" e ative o provedor "Anônimo".
+   4. Na página inicial do projeto, clique no ícone "</>" (Web) para
+      registrar um app da Web e copie o objeto de configuração que
+      aparece — cole os valores abaixo, substituindo os textos
+      "COLE_AQUI...".
+   5. Em "Firestore Database" > aba "Regras", cole:
+        rules_version = '2';
+        service cloud.firestore {
+          match /databases/{database}/documents {
+            match /{document=**} {
+              allow read, write: if request.auth != null;
+            }
+          }
+        }
+      e clique em "Publicar". Isso permite acesso a quem abrir esta
+      aplicação (ela entra de forma anônima no Firebase só para
+      liberar a leitura/escrita) — o login de verdade continua sendo
+      o sistema próprio desta aplicação (usuário e senha).
+
+   Enquanto os valores abaixo não forem preenchidos, a aplicação
+   funciona normalmente em "modo local": cada navegador guarda seus
+   próprios dados, sem sincronizar com outros aparelhos.
+   ============================================================ */
+var FIREBASE_CONFIG = {
+  apiKey: "AIzaSyADO_fV0fkM9kl4zv5xPLBF5Mq_QiKxXv4",
+  authDomain: "agenda-c4388.firebaseapp.com",
+  projectId: "agenda-c4388",
+  storageBucket: "agenda-c4388.firebasestorage.app",
+  messagingSenderId: "452200183008",
+  appId: "1:452200183008:web:f4939639f802f12ce00c85"
+};
+
+var PERIODS = [
+  {id:'p1', label:'1ª aula', start:'07:00', end:'07:50', shift:'Manhã'},
+  {id:'p2', label:'2ª aula', start:'07:50', end:'08:40', shift:'Manhã'},
+  {id:'p3', label:'3ª aula', start:'08:40', end:'09:30', shift:'Manhã'},
+  {id:'p4', label:'4ª aula', start:'09:50', end:'10:40', shift:'Manhã'},
+  {id:'p5', label:'5ª aula', start:'10:40', end:'11:30', shift:'Manhã'},
+  {id:'p6', label:'6ª aula', start:'13:00', end:'13:50', shift:'Tarde'},
+  {id:'p7', label:'7ª aula', start:'13:50', end:'14:40', shift:'Tarde'},
+  {id:'p8', label:'8ª aula', start:'14:40', end:'15:30', shift:'Tarde'},
+  {id:'p9', label:'9ª aula', start:'15:50', end:'16:40', shift:'Tarde'}
+];
+function periodById(id){ for (var i=0;i<PERIODS.length;i++){ if (PERIODS[i].id===id) return PERIODS[i]; } return null; }
+
+var ROLES = {
+  admin: { label: "Administrador" },
+  professor: { label: "Professor/Funcionário" },
+  aluno: { label: "Aluno" }
+};
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+function $(sel, root){ return (root||document).querySelector(sel); }
+function $all(sel, root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
+function h(str){ var d=document.createElement('div'); d.textContent = str==null?'':String(str); return d.innerHTML; }
+function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4); }
+
+function pad2(n){ return (n<10?'0':'')+n; }
+function isoDate(d){ return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()); }
+function todayISO(){ return isoDate(new Date()); }
+function parseISO(s){ var p=s.split('-'); return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2])); }
+var MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+var MESES_FULL = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+var DIAS_SEMANA = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+function fmtDateLong(iso){ var d=parseISO(iso); return DIAS_SEMANA[d.getDay()]+', '+d.getDate()+' de '+MESES_FULL[d.getMonth()]+' de '+d.getFullYear(); }
+function fmtDateShort(iso){ var d=parseISO(iso); return {num:d.getDate(), mon:MESES[d.getMonth()]}; }
+function addDays(iso, n){ var d=parseISO(iso); d.setDate(d.getDate()+n); return isoDate(d); }
+
+function toast(msg, kind){
+  var wrap = $('#toastWrap');
+  var el = document.createElement('div');
+  el.className = 'toast ' + (kind==='err' ? 'toast-err' : 'toast-ok');
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(function(){ el.style.transition='opacity .25s ease'; el.style.opacity='0'; setTimeout(function(){ el.remove(); }, 250); }, 3200);
+}
+
+async function sha256Hex(text){
+  var enc = new TextEncoder().encode(text);
+  var buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.prototype.map.call(new Uint8Array(buf), function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
+async function hashPassword(pw, salt){ return sha256Hex(salt + ':' + pw); }
+
+function localGet(key){ try { return JSON.parse(localStorage.getItem(key)); } catch(e){ return null; } }
+function localSet(key, val){ try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){} }
+function localDel(key){ try { localStorage.removeItem(key); } catch(e){} }
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+var state = {
+  dbReady: false,
+  db: null,
+  currentUser: null,     // { username, name, role }
+  users: [],
+  rooms: [],
+  bookings: [],
+  view: 'dashboard',
+  loading: true,
+  drawerOpen: false,
+  newBooking: { date: todayISO(), periodId: null, roomId: null, note: '' },
+  authMode: 'login',
+  authError: '',
+  authBusy: false
+};
+
+/* ============================================================
+   BANCO DE DADOS (Firebase/Firestore, com fallback local)
+   Se o FIREBASE_CONFIG acima não estiver preenchido, ou se a conexão
+   falhar, a aplicação cai para um modo local (armazenamento apenas
+   neste navegador) para que a demonstração continue funcional.
+   ============================================================ */
+var unsubUsers=null, unsubRooms=null, unsubBookings=null;
+var LOCAL_MODE = false;
+var fb = {}; // guarda as funções do SDK do Firebase depois de carregadas
+
+function firebaseConfigured(){
+  return FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey.indexOf('COLE_AQUI')!==0;
+}
+
+async function loadFirebaseSdk(){
+  var ver = '10.14.1';
+  var appMod = await import('https://www.gstatic.com/firebasejs/'+ver+'/firebase-app.js');
+  var authMod = await import('https://www.gstatic.com/firebasejs/'+ver+'/firebase-auth.js');
+  var fsMod = await import('https://www.gstatic.com/firebasejs/'+ver+'/firebase-firestore.js');
+  fb.initializeApp = appMod.initializeApp;
+  fb.getAuth = authMod.getAuth;
+  fb.signInAnonymously = authMod.signInAnonymously;
+  fb.getFirestore = fsMod.getFirestore;
+  fb.collection = fsMod.collection;
+  fb.doc = fsMod.doc;
+  fb.setDoc = fsMod.setDoc;
+  fb.updateDoc = fsMod.updateDoc;
+  fb.deleteDoc = fsMod.deleteDoc;
+  fb.addDoc = fsMod.addDoc;
+  fb.query = fsMod.query;
+  fb.limit = fsMod.limit;
+  fb.getDocs = fsMod.getDocs;
+  fb.onSnapshot = fsMod.onSnapshot;
+}
+
+/* Adaptador fino que expõe o Firestore com a mesma "forma" de API
+   usada no restante do código (collection().doc().set()/.update()/
+   .delete(), collection().add(), collection().limit().get(),
+   collection().onSnapshot()) — assim a lógica de agendamento abaixo
+   não precisa saber qual banco de dados está por trás. */
+function makeFirestoreAdapter(fsDb){
+  function colRef(name){
+    var base = fb.collection(fsDb, name);
+    return {
+      doc: function(id){
+        var ref = id ? fb.doc(fsDb, name, id) : fb.doc(base);
+        return {
+          id: ref.id,
+          set: function(data){ return fb.setDoc(ref, data); },
+          update: function(data){ return fb.updateDoc(ref, data); },
+          delete: function(){ return fb.deleteDoc(ref); }
+        };
+      },
+      add: function(data){ return fb.addDoc(base, data); },
+      limit: function(n){
+        var q = fb.query(base, fb.limit(n));
+        return { get: function(){
+          return fb.getDocs(q).then(function(snap){
+            return { docs: snap.docs.map(function(d){ return { id: d.id, data: function(){ return d.data(); } }; }) };
+          });
+        } };
+      },
+      onSnapshot: function(next, err){
+        return fb.onSnapshot(base, function(snap){
+          next({ docs: snap.docs.map(function(d){ return { id: d.id, data: function(){ return d.data(); } }; }) });
+        }, err);
+      }
+    };
+  }
+  return { collection: colRef };
+}
+
+async function initDb(){
+  if (firebaseConfigured()){
+    try{
+      await loadFirebaseSdk();
+      var app = fb.initializeApp(FIREBASE_CONFIG);
+      var auth = fb.getAuth(app);
+      await fb.signInAnonymously(auth);
+      var fsDb = fb.getFirestore(app);
+      state.db = makeFirestoreAdapter(fsDb);
+    } catch(e){
+      console.error('Não foi possível conectar ao Firebase; usando modo local.', e);
+      state.db = null;
+    }
+  }
+
+  if (!state.db){
+    LOCAL_MODE = true;
+    loadLocalFallback();
+    await seedIfNeeded();
+    state.dbReady = true;
+    render();
+    return;
+  }
+
+  await seedIfNeeded();
+
+  var firstUserSnapshot = true;
+  unsubUsers = state.db.collection('users').onSnapshot(function(snap){
+    state.users = snap.docs.map(function(d){ var v=d.data(); v.id=d.id; return v; });
+    state.dbReady = true;
+    if (firstUserSnapshot){ firstUserSnapshot = false; restoreSession(); }
+    render();
+  }, function(){ });
+  unsubRooms = state.db.collection('rooms').onSnapshot(function(snap){
+    state.rooms = snap.docs.map(function(d){ var v=d.data(); v.id=d.id; return v; });
+    render();
+  }, function(){ });
+  unsubBookings = state.db.collection('bookings').onSnapshot(function(snap){
+    state.bookings = snap.docs.map(function(d){ var v=d.data(); v.id=d.id; return v; });
+    render();
+  }, function(){ });
+}
+
+function loadLocalFallback(){
+  state.users = localGet('cehaf_users') || [];
+  state.rooms = localGet('cehaf_rooms') || [];
+  state.bookings = localGet('cehaf_bookings') || [];
+}
+function persistLocal(){
+  localSet('cehaf_users', state.users);
+  localSet('cehaf_rooms', state.rooms);
+  localSet('cehaf_bookings', state.bookings);
+}
+
+var DEFAULT_ROOMS = [
+  {id:'sala-chromebooks', name:'Chromebooks', description:'Chromebooks com acesso à internet.', capacity:20, status:'ativo', studentAllowed:false},
+  {id:'sala-quadra', name:'Quadra Poliesportiva', description:'Quadra coberta para educação física e eventos.', capacity:60, status:'ativo', studentAllowed:false},
+  {id:'sala-biblioteca', name:'Biblioteca', description:'Espaço de leitura e estudo em grupo.', capacity:25, status:'ativo', studentAllowed:true}
+];
+
+async function seedIfNeeded(){
+  if (LOCAL_MODE){
+    if (state.rooms.length===0){ state.rooms = DEFAULT_ROOMS.slice(); }
+    if (state.users.length===0){
+      var salt = uid();
+      state.users = [
+        {id:'admin', username:'admin', name:'Administração CEHAF', role:'admin', status:'ativo', salt:salt, passwordHash: await hashPassword('admin123', salt), createdAt: Date.now()}
+      ];
+      var salt2 = uid();
+      state.users.push({id:'professor', username:'professor', name:'Prof. Demonstração', role:'professor', status:'ativo', salt:salt2, passwordHash: await hashPassword('prof123', salt2), createdAt: Date.now()});
+      var salt3 = uid();
+      state.users.push({id:'aluno', username:'aluno', name:'Aluno Demonstração', role:'aluno', status:'ativo', salt:salt3, passwordHash: await hashPassword('aluno123', salt3), createdAt: Date.now()});
+    }
+    persistLocal();
+    return;
+  }
+
+  try{
+    var usersSnap = await state.db.collection('users').limit(1).get();
+    if (usersSnap.docs.length===0){
+      var salt = uid();
+      await state.db.collection('users').doc('admin').set({
+        username:'admin', name:'Administração CEHAF', role:'admin', status:'ativo',
+        salt: salt, passwordHash: await hashPassword('admin123', salt), createdAt: Date.now()
+      });
+      var salt2 = uid();
+      await state.db.collection('users').doc('professor').set({
+        username:'professor', name:'Prof. Demonstração', role:'professor', status:'ativo',
+        salt: salt2, passwordHash: await hashPassword('prof123', salt2), createdAt: Date.now()
+      });
+      var salt3 = uid();
+      await state.db.collection('users').doc('aluno').set({
+        username:'aluno', name:'Aluno Demonstração', role:'aluno', status:'ativo',
+        salt: salt3, passwordHash: await hashPassword('aluno123', salt3), createdAt: Date.now()
+      });
+    }
+    var roomsSnap = await state.db.collection('rooms').limit(1).get();
+    if (roomsSnap.docs.length===0){
+      for (var i=0;i<DEFAULT_ROOMS.length;i++){
+        var r = DEFAULT_ROOMS[i];
+        await state.db.collection('rooms').doc(r.id).set({
+          name:r.name, description:r.description, capacity:r.capacity, status:r.status, studentAllowed:r.studentAllowed, createdAt: Date.now()
+        });
+      }
+    }
+  } catch(e){ /* seeding é best-effort; a interface segue funcionando */ }
+}
+
+/* ---- operações de escrita, com fallback local ---- */
+async function dbAddUser(u){
+  if (LOCAL_MODE){ u.id = u.username; state.users.push(u); persistLocal(); return; }
+  await state.db.collection('users').doc(u.username).set(u);
+}
+async function dbUpdateUser(id, patch){
+  if (LOCAL_MODE){
+    var u = state.users.find(function(x){ return x.id===id; });
+    if (u) Object.assign(u, patch);
+    persistLocal(); return;
+  }
+  await state.db.collection('users').doc(id).update(patch);
+}
+async function dbDeleteUser(id){
+  if (LOCAL_MODE){ state.users = state.users.filter(function(x){ return x.id!==id; }); persistLocal(); return; }
+  await state.db.collection('users').doc(id).delete();
+}
+async function dbAddRoom(r){
+  if (LOCAL_MODE){ r.id = 'sala-'+uid(); state.rooms.push(r); persistLocal(); return; }
+  await state.db.collection('rooms').add(r);
+}
+async function dbUpdateRoom(id, patch){
+  if (LOCAL_MODE){
+    var r = state.rooms.find(function(x){ return x.id===id; });
+    if (r) Object.assign(r, patch);
+    persistLocal(); return;
+  }
+  await state.db.collection('rooms').doc(id).update(patch);
+}
+async function dbDeleteRoom(id){
+  if (LOCAL_MODE){ state.rooms = state.rooms.filter(function(x){ return x.id!==id; }); persistLocal(); return; }
+  await state.db.collection('rooms').doc(id).delete();
+}
+async function dbAddBooking(b){
+  if (LOCAL_MODE){ b.id = uid(); state.bookings.push(b); persistLocal(); render(); return; }
+  await state.db.collection('bookings').add(b);
+}
+async function dbUpdateBooking(id, patch){
+  if (LOCAL_MODE){
+    var b = state.bookings.find(function(x){ return x.id===id; });
+    if (b) Object.assign(b, patch);
+    persistLocal(); render(); return;
+  }
+  await state.db.collection('bookings').doc(id).update(patch);
+}
+
+/* ============================================================
+   AUTENTICAÇÃO
+   ============================================================ */
+async function tryLogin(username, password){
+  username = (username||'').trim().toLowerCase();
+  var user = state.users.find(function(u){ return u.username.toLowerCase()===username; });
+  if (!user) return { ok:false, msg:'Usuário ou senha inválidos.' };
+  if (user.status !== 'ativo') return { ok:false, msg:'Este usuário está inativo. Procure a administração.' };
+  var hash = await hashPassword(password, user.salt);
+  if (hash !== user.passwordHash) return { ok:false, msg:'Usuário ou senha inválidos.' };
+  return { ok:true, user:user };
+}
+
+function setSession(user){
+  state.currentUser = { username: user.username, name: user.name, role: user.role };
+  localSet('cehaf_session', state.currentUser.username);
+}
+function clearSession(){
+  state.currentUser = null;
+  localDel('cehaf_session');
+}
+function restoreSession(){
+  var uname = localGet('cehaf_session');
+  if (!uname) return;
+  var user = state.users.find(function(u){ return u.username===uname && u.status==='ativo'; });
+  if (user) state.currentUser = { username: user.username, name: user.name, role: user.role };
+  else localDel('cehaf_session');
+}
+
+/* ============================================================
+   LÓGICA DE AGENDAMENTO
+   ============================================================ */
+function activeBookings(){ return state.bookings.filter(function(b){ return b.status !== 'cancelado'; }); }
+function isSlotTaken(date, periodId, roomId, excludeId){
+  return activeBookings().some(function(b){
+    return b.date===date && b.periodId===periodId && b.roomId===roomId && b.id!==excludeId;
+  });
+}
+function roomsForCurrentUser(){
+  if (!state.currentUser) return [];
+  if (state.currentUser.role === 'aluno') return state.rooms.filter(function(r){ return r.status==='ativo' && r.studentAllowed; });
+  return state.rooms.filter(function(r){ return r.status==='ativo'; });
+}
+function myBookings(){
+  if (!state.currentUser) return [];
+  return state.bookings.filter(function(b){ return b.userId===state.currentUser.username; })
+    .sort(function(a,b){ return (a.date+a.periodId) < (b.date+b.periodId) ? 1 : -1; });
+}
+function upcomingBookings(list){
+  var today = todayISO();
+  return list.filter(function(b){ return b.status!=='cancelado' && b.date >= today; })
+    .sort(function(a,b){ return (a.date+a.periodId) > (b.date+b.periodId) ? 1 : -1; });
+}
+
+/* ============================================================
+   RENDER — roteador principal
+   ============================================================ */
+function render(){
+  var root = $('#app');
+  if (!state.currentUser){
+    root.innerHTML = renderLogin();
+    bindLoginEvents();
+    return;
+  }
+  root.innerHTML = renderShell();
+  bindShellEvents();
+}
+
+/* ---------------- LOGIN ---------------- */
+function renderLogin(){
+  return (
+    '<div class="login-wrap">'+
+      '<div class="login-card">'+
+        '<div class="login-mark">'+h(SCHOOL.monogram)+'</div>'+
+        '<h1>'+h(SCHOOL.name)+'</h1>'+
+        '<div class="login-sub">'+h(SCHOOL.subtitle)+'</div>'+
+        '<form id="loginForm">'+
+          '<div class="field">'+
+            '<label class="field-label" for="fUser">Usuário</label>'+
+            '<input class="input" id="fUser" name="username" placeholder="ex: professor" autocomplete="username" autocapitalize="off" required>'+
+          '</div>'+
+          '<div class="field">'+
+            '<label class="field-label" for="fPass">Senha</label>'+
+            '<input class="input" id="fPass" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required>'+
+          '</div>'+
+          (state.authError ? '<div class="field-error" style="margin:-6px 0 14px;">'+h(state.authError)+'</div>' : '')+
+          '<button type="submit" class="btn btn-primary btn-block" '+(state.authBusy?'disabled':'')+'>'+(state.authBusy?'Entrando…':'Entrar')+'</button>'+
+        '</form>'+
+        (LOCAL_MODE ? '<div class="login-demo" style="margin-top:10px;background:var(--danger-bg);color:var(--danger);">Modo local: o Firebase ainda não foi configurado (ou não foi possível conectar). Os dados ficam só neste navegador — veja as instruções no topo do código-fonte (FIREBASE_CONFIG).</div>' : '')+
+      '</div>'+
+    '</div>'
+  );
+}
+function bindLoginEvents(){
+  var form = $('#loginForm');
+  if (!form) return;
+  form.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    state.authBusy = true; state.authError=''; render();
+    var fd = new FormData(form);
+    var res = await tryLogin(fd.get('username'), fd.get('password'));
+    state.authBusy = false;
+    if (res.ok){
+      setSession(res.user);
+      state.view = 'dashboard';
+      toast('Bem-vindo(a), '+res.user.name.split(' ')[0]+'!');
+      render();
+    } else {
+      state.authError = res.msg;
+      render();
+    }
+  });
+}
+
+/* ---------------- SHELL (topbar + sidebar + conteúdo) ---------------- */
+function navItems(){
+  var items = [
+    {id:'dashboard', label:'Painel', icon:iconHome()},
+    {id:'novo', label:'Novo agendamento', icon:iconPlus()},
+    {id:'meus', label:'Meus agendamentos', icon:iconCal()}
+  ];
+  if (state.currentUser.role==='admin'){
+    items.push({id:'admin-agendamentos', label:'Todos os agendamentos', icon:iconList(), section:'Administração'});
+    items.push({id:'admin-salas', label:'Salas e recursos', icon:iconRoom(), section:'Administração'});
+    items.push({id:'admin-usuarios', label:'Usuários', icon:iconUsers(), section:'Administração'});
+  }
+  return items;
+}
+function iconHome(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>'; }
+function iconPlus(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>'; }
+function iconCal(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3"/></svg>'; }
+function iconList(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>'; }
+function iconRoom(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V7l9-4 9 4v14"/><path d="M9 21v-8h6v8"/></svg>'; }
+function iconUsers(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>'; }
+function iconMenu(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>'; }
+function iconLogout(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>'; }
+
+function sidebarHtml(mobile){
+  var items = navItems();
+  var out = '';
+  var lastSection = null;
+  items.forEach(function(it){
+    if (it.section && it.section !== lastSection){
+      out += '<div class="nav-section-label">'+h(it.section)+'</div>';
+      lastSection = it.section;
+    }
+    out += '<button class="nav-item '+(state.view===it.id?'active':'')+'" data-nav="'+it.id+'">'+it.icon+'<span>'+h(it.label)+'</span></button>';
+  });
+  return (
+    '<div class="brand" style="padding:6px 10px 18px;">'+
+      '<div class="brand-mark">'+h(SCHOOL.monogram)+'</div>'+
+      '<div class="brand-text"><div class="school-name" style="color:#fff;">'+h(SCHOOL.shortName)+'</div><div class="school-sub">Agenda escolar</div></div>'+
+    '</div>' + out
+  );
+}
+
+function renderShell(){
+  var u = state.currentUser;
+  var initials = u.name.split(' ').map(function(p){return p[0];}).slice(0,2).join('').toUpperCase();
+  return (
+    '<div class="topbar">'+
+      '<div class="brand">'+
+        '<button class="icon-btn menu-toggle" id="btnDrawer" aria-label="Abrir menu">'+iconMenu()+'</button>'+
+        '<div class="brand-mark">'+h(SCHOOL.monogram)+'</div>'+
+        '<div class="brand-text">'+
+          '<div class="school-name">'+h(SCHOOL.name)+'</div>'+
+          '<div class="school-sub">'+h(SCHOOL.subtitle)+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="topbar-right">'+
+        '<div class="user-chip">'+
+          '<div class="user-avatar">'+h(initials)+'</div>'+
+          '<div class="user-meta"><div class="u-name">'+h(u.name)+'</div><div class="u-role">'+h(ROLES[u.role].label)+'</div></div>'+
+        '</div>'+
+        '<button class="icon-btn" id="btnLogout" aria-label="Sair" title="Sair">'+iconLogout()+'</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="body-row">'+
+      '<aside class="sidebar">'+sidebarHtml(false)+'</aside>'+
+      '<main id="mainContent">'+renderView()+'</main>'+
+    '</div>'+
+    '<div class="mobile-drawer-backdrop" id="drawerBackdrop"></div>'+
+    '<aside class="mobile-drawer" id="mobileDrawer">'+sidebarHtml(true)+'</aside>'+
+    (state.view!=='novo' ? '<button class="btn btn-primary fab" data-nav="novo" aria-label="Novo agendamento">'+iconPlus()+' Novo</button>' : '')+
+    (state.modal ? renderModal() : '')
+  );
+}
+
+function renderView(){
+  switch(state.view){
+    case 'dashboard': return renderDashboard();
+    case 'novo': return renderNewBooking();
+    case 'meus': return renderMyBookings();
+    case 'admin-usuarios': return state.currentUser.role==='admin' ? renderAdminUsers() : renderDashboard();
+    case 'admin-salas': return state.currentUser.role==='admin' ? renderAdminRooms() : renderDashboard();
+    case 'admin-agendamentos': return state.currentUser.role==='admin' ? renderAdminBookings() : renderDashboard();
+    default: return renderDashboard();
+  }
+}
+
+/* ---------------- DASHBOARD ---------------- */
+function renderDashboard(){
+  var u = state.currentUser;
+  var mine = myBookings();
+  var upcomingMine = upcomingBookings(mine);
+  var today = todayISO();
+  var todaysAll = activeBookings().filter(function(b){ return b.date===today; });
+  var todaysMine = todaysAll.filter(function(b){ return b.userId===u.username; });
+  var freeNowCount = roomsForCurrentUser().length;
+
+  var cards = '';
+  cards += statCard('Próximo agendamento', upcomingMine[0] ? fmtDateShort(upcomingMine[0].date).num+' '+fmtDateShort(upcomingMine[0].date).mon+' · '+periodById(upcomingMine[0].periodId).label : '—', upcomingMine[0] ? roomName(upcomingMine[0].roomId) : 'Nenhum agendamento futuro');
+  cards += statCard('Agendamentos hoje', String(u.role==='admin' ? todaysAll.length : todaysMine.length), u.role==='admin' ? 'na escola toda' : 'seus, para hoje');
+  cards += statCard('Meus agendamentos ativos', String(upcomingMine.length), 'a partir de hoje');
+  cards += statCard('Ambientes disponíveis', String(freeNowCount), 'que você pode reservar');
+  if (u.role==='admin'){
+    cards += statCard('Usuários cadastrados', String(state.users.length), state.users.filter(function(x){return x.status==='ativo';}).length+' ativos');
+    cards += statCard('Total de agendamentos', String(activeBookings().length), 'em todo o sistema');
+  }
+
+  var listSource = u.role==='admin' ? upcomingBookings(state.bookings) : upcomingMine;
+  var listHtml = listSource.length===0
+    ? '<div class="empty-state">Nenhum agendamento futuro. <button class="btn btn-sm btn-ghost" data-nav="novo" style="margin-top:8px;">Criar agendamento</button></div>'
+    : listSource.slice(0,8).map(function(b){ return bookingRow(b, u.role==='admin'); }).join('');
+
+  return (
+    pageHead('Painel', 'Bem-vindo(a)', 'Olá, '+u.name.split(' ')[0]+'. Aqui está um resumo dos agendamentos do '+SCHOOL.shortName+'.')+
+    '<div class="grid grid-cards">'+cards+'</div>'+
+    '<div class="section-title">Próximos agendamentos<button class="btn btn-sm btn-ghost" data-nav="'+(u.role==='admin'?'admin-agendamentos':'meus')+'">Ver todos</button></div>'+
+    '<div class="list-card">'+listHtml+'</div>'
+  );
+}
+function statCard(label, value, foot){
+  return '<div class="card stat-card"><div class="stat-label">'+h(label)+'</div><div class="stat-value">'+h(value)+'</div><div class="stat-foot">'+h(foot)+'</div></div>';
+}
+function roomName(id){ var r = state.rooms.find(function(x){return x.id===id;}); return r ? r.name : 'Sala removida'; }
+function bookingRow(b, showUser){
+  var d = fmtDateShort(b.date);
+  var p = periodById(b.periodId);
+  var statusBadge = b.status==='cancelado' ? '<span class="badge badge-cancel">Cancelado</span>' : '<span class="badge badge-ok">Confirmado</span>';
+  return (
+    '<div class="list-row">'+
+      '<div class="lr-date"><div class="d-num">'+d.num+'</div><div class="d-mon">'+d.mon+'</div></div>'+
+      '<div class="lr-body">'+
+        '<div class="lr-title">'+h(roomName(b.roomId))+'</div>'+
+        '<div class="lr-sub">'+(p?h(p.label+' · '+p.start+'–'+p.end):'')+(showUser?' · '+h(b.userName):'')+(b.note?' · '+h(b.note):'')+'</div>'+
+      '</div>'+
+      statusBadge+
+    '</div>'
+  );
+}
+
+/* ---------------- NOVO AGENDAMENTO ---------------- */
+function renderNewBooking(){
+  var nb = state.newBooking;
+  var rooms = roomsForCurrentUser();
+  var roomOptions = rooms.map(function(r){ return '<option value="'+h(r.id)+'" '+(nb.roomId===r.id?'selected':'')+'>'+h(r.name)+' (cap. '+h(r.capacity)+')</option>'; }).join('');
+
+  var periodsHtml = '';
+  var shifts = ['Manhã','Tarde'];
+  shifts.forEach(function(shift){
+    periodsHtml += '<div class="shift-label">'+shift+'</div><div class="period-grid">';
+    PERIODS.filter(function(p){return p.shift===shift;}).forEach(function(p){
+      var taken = nb.roomId ? isSlotTaken(nb.date, p.id, nb.roomId) : false;
+      var cls = 'period-cell' + (taken?' busy':'') + (nb.periodId===p.id && !taken ? ' selected':'') + (!nb.roomId ? '' : '');
+      periodsHtml += '<button type="button" class="'+cls+'" '+(taken?'disabled':'')+' data-period="'+p.id+'">'+
+        '<div class="pc-label">'+p.label+'</div>'+
+        '<div class="pc-time">'+p.start+' – '+p.end+'</div>'+
+        '<div class="pc-status">'+(taken?'Ocupado':'Disponível')+'</div>'+
+      '</button>';
+    });
+    periodsHtml += '</div>';
+  });
+
+  var canSubmit = nb.date && nb.periodId && nb.roomId && !isSlotTaken(nb.date, nb.periodId, nb.roomId);
+
+  return (
+    pageHead('Agendamento', 'Novo agendamento', 'Escolha a data, o horário e o ambiente que deseja reservar.')+
+    '<form id="bookingForm">'+
+      '<div class="card" style="margin-bottom:16px;">'+
+        '<div class="grid" style="grid-template-columns: 1fr 1fr; gap:14px;">'+
+          '<div class="field" style="margin-bottom:0;">'+
+            '<label class="field-label" for="bDate">Data</label>'+
+            '<input class="input" type="date" id="bDate" min="'+todayISO()+'" value="'+h(nb.date)+'">'+
+          '</div>'+
+          '<div class="field" style="margin-bottom:0;">'+
+            '<label class="field-label" for="bRoom">Ambiente / recurso</label>'+
+            '<select class="input" id="bRoom">'+
+              '<option value="">Selecione…</option>'+ roomOptions +
+            '</select>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      (rooms.length===0 ? '<div class="card"><div class="empty-state">Não há ambientes disponíveis para o seu perfil no momento.</div></div>' : (
+      '<div class="card" style="margin-bottom:16px;">'+
+        '<label class="field-label" style="margin-bottom:12px;">Horário — '+h(fmtDateLong(nb.date))+'</label>'+
+        (nb.roomId ? periodsHtml : '<div class="empty-state">Selecione um ambiente para ver os horários disponíveis.</div>')+
+      '</div>'+
+      '<div class="card" style="margin-bottom:18px;">'+
+        '<div class="field" style="margin-bottom:0;">'+
+          '<label class="field-label" for="bNote">Observação (opcional)</label>'+
+          '<textarea class="input" id="bNote" rows="2" placeholder="Ex: aula de laboratório, turma 2º B">'+h(nb.note)+'</textarea>'+
+        '</div>'+
+      '</div>'+
+      '<button type="submit" class="btn btn-primary btn-block" '+(canSubmit?'':'disabled')+'>Confirmar agendamento</button>'
+      ))+
+    '</form>'
+  );
+}
+
+/* ---------------- MEUS AGENDAMENTOS ---------------- */
+function renderMyBookings(){
+  var mine = myBookings();
+  var rowsHtml = mine.length===0 ? '<tr><td colspan="5"><div class="empty-state">Você ainda não tem agendamentos.</div></td></tr>' :
+    mine.map(function(b){
+      var p = periodById(b.periodId);
+      var canCancel = b.status!=='cancelado' && b.date >= todayISO();
+      return '<tr>'+
+        '<td>'+h(fmtDateShort(b.date).num+' '+fmtDateShort(b.date).mon)+'</td>'+
+        '<td>'+(p?h(p.label):'')+'</td>'+
+        '<td>'+h(roomName(b.roomId))+'</td>'+
+        '<td>'+(b.status==='cancelado'?'<span class="badge badge-cancel">Cancelado</span>':'<span class="badge badge-ok">Confirmado</span>')+'</td>'+
+        '<td>'+(canCancel?'<button class="btn btn-sm btn-danger-ghost" data-cancel="'+h(b.id)+'">Cancelar</button>':'—')+'</td>'+
+      '</tr>';
+    }).join('');
+  return (
+    pageHead('Agenda', 'Meus agendamentos', 'Consulte e gerencie os agendamentos feitos por você.')+
+    '<div class="table-wrap"><table class="data-table"><thead><tr><th>Data</th><th>Horário</th><th>Ambiente</th><th>Status</th><th></th></tr></thead><tbody>'+rowsHtml+'</tbody></table></div>'
+  );
+}
+
+/* ---------------- ADMIN: TODOS OS AGENDAMENTOS ---------------- */
+function renderAdminBookings(){
+  var list = state.bookings.slice().sort(function(a,b){ return (a.date+a.periodId) < (b.date+b.periodId) ? 1 : -1; });
+  var rowsHtml = list.length===0 ? '<tr><td colspan="6"><div class="empty-state">Nenhum agendamento registrado ainda.</div></td></tr>' :
+    list.map(function(b){
+      var p = periodById(b.periodId);
+      return '<tr>'+
+        '<td>'+h(fmtDateShort(b.date).num+' '+fmtDateShort(b.date).mon)+'</td>'+
+        '<td>'+(p?h(p.label):'')+'</td>'+
+        '<td>'+h(roomName(b.roomId))+'</td>'+
+        '<td>'+h(b.userName)+'</td>'+
+        '<td>'+(b.status==='cancelado'?'<span class="badge badge-cancel">Cancelado</span>':'<span class="badge badge-ok">Confirmado</span>')+'</td>'+
+        '<td>'+(b.status!=='cancelado' ? '<button class="btn btn-sm btn-danger-ghost" data-cancel="'+h(b.id)+'">Cancelar</button>' : '—')+'</td>'+
+      '</tr>';
+    }).join('');
+  return (
+    pageHead('Administração', 'Todos os agendamentos', 'Visão completa de todos os agendamentos do '+SCHOOL.shortName+'.')+
+    '<div class="table-wrap"><table class="data-table"><thead><tr><th>Data</th><th>Horário</th><th>Ambiente</th><th>Solicitante</th><th>Status</th><th></th></tr></thead><tbody>'+rowsHtml+'</tbody></table></div>'
+  );
+}
+
+/* ---------------- ADMIN: SALAS ---------------- */
+function renderAdminRooms(){
+  var rowsHtml = state.rooms.length===0 ? '<tr><td colspan="5"><div class="empty-state">Nenhuma sala cadastrada.</div></td></tr>' :
+    state.rooms.map(function(r){
+      return '<tr>'+
+        '<td><div style="font-weight:600;">'+h(r.name)+'</div><div style="font-size:12px;color:var(--muted);">'+h(r.description||'')+'</div></td>'+
+        '<td>'+h(r.capacity||'—')+'</td>'+
+        '<td>'+(r.studentAllowed?'Sim':'Não')+'</td>'+
+        '<td>'+(r.status==='ativo'?'<span class="badge badge-ok">Ativa</span>':'<span class="badge badge-cancel">Inativa</span>')+'</td>'+
+        '<td style="white-space:nowrap;">'+
+          '<button class="btn btn-sm btn-ghost" data-toggle-room="'+h(r.id)+'">'+(r.status==='ativo'?'Desativar':'Ativar')+'</button> '+
+          '<button class="btn btn-sm btn-danger-ghost" data-delete-room="'+h(r.id)+'">Excluir</button>'+
+        '</td>'+
+      '</tr>';
+    }).join('');
+  return (
+    pageHead('Administração', 'Salas e recursos', 'Gerencie os ambientes disponíveis para agendamento.')+
+    '<button class="btn btn-navy" style="margin-bottom:16px;" data-open-modal="newRoom">'+iconPlus()+' Nova sala/recurso</button>'+
+    '<div class="table-wrap"><table class="data-table"><thead><tr><th>Ambiente</th><th>Capacidade</th><th>Alunos podem reservar</th><th>Status</th><th></th></tr></thead><tbody>'+rowsHtml+'</tbody></table></div>'
+  );
+}
+
+/* ---------------- ADMIN: USUÁRIOS ---------------- */
+function renderAdminUsers(){
+  var rowsHtml = state.users.length===0 ? '' :
+    state.users.map(function(u){
+      return '<tr>'+
+        '<td><div style="font-weight:600;">'+h(u.name)+'</div><div style="font-size:12px;color:var(--muted);">@'+h(u.username)+'</div></td>'+
+        '<td><span class="badge badge-role">'+h(ROLES[u.role]?ROLES[u.role].label:u.role)+'</span></td>'+
+        '<td>'+(u.status==='ativo'?'<span class="badge badge-ok">Ativo</span>':'<span class="badge badge-cancel">Inativo</span>')+'</td>'+
+        '<td style="white-space:nowrap;">'+
+          '<button class="btn btn-sm btn-ghost" data-toggle-user="'+h(u.id)+'">'+(u.status==='ativo'?'Desativar':'Ativar')+'</button> '+
+          '<button class="btn btn-sm btn-ghost" data-reset-user="'+h(u.id)+'">Redefinir senha</button> '+
+          (u.username!=='admin' ? '<button class="btn btn-sm btn-danger-ghost" data-delete-user="'+h(u.id)+'">Excluir</button>' : '')+
+        '</td>'+
+      '</tr>';
+    }).join('');
+  return (
+    pageHead('Administração', 'Usuários', 'Cadastre e gerencie contas de professores, funcionários e alunos.')+
+    '<button class="btn btn-navy" style="margin-bottom:16px;" data-open-modal="newUser">'+iconPlus()+' Novo usuário</button>'+
+    '<div class="table-wrap"><table class="data-table"><thead><tr><th>Nome</th><th>Perfil</th><th>Status</th><th></th></tr></thead><tbody>'+rowsHtml+'</tbody></table></div>'
+  );
+}
+
+function pageHead(eyebrow, title, sub){
+  return '<div class="page-head"><div class="eyebrow">'+h(eyebrow)+'</div><h1>'+h(title)+'</h1><p>'+h(sub)+'</p></div>';
+}
+
+/* ---------------- MODAIS ---------------- */
+function renderModal(){
+  if (!state.modal) return '';
+  if (state.modal==='newRoom') return modalNewRoom();
+  if (state.modal==='newUser') return modalNewUser();
+  if (state.modal==='resetUser') return modalResetUser();
+  if (state.modal==='confirmCancel') return modalConfirmCancel();
+  return '';
+}
+function modalWrap(inner){
+  return '<div class="modal-backdrop" id="modalBackdrop"><div class="modal">'+inner+'</div></div>';
+}
+function modalNewRoom(){
+  return modalWrap(
+    '<h3>Nova sala / recurso</h3><div class="modal-sub">Adicione um ambiente que poderá ser agendado.</div>'+
+    '<form id="roomForm">'+
+      '<div class="field"><label class="field-label">Nome</label><input class="input" name="name" required placeholder="Ex: Sala de Reuniões"></div>'+
+      '<div class="field"><label class="field-label">Descrição</label><input class="input" name="description" placeholder="Ex: 10 lugares, TV disponível"></div>'+
+      '<div class="field"><label class="field-label">Capacidade</label><input class="input" name="capacity" type="number" min="1" placeholder="Ex: 30"></div>'+
+      '<div class="switch-row" style="padding:4px 0 12px;"><span style="font-size:13.5px;">Permitir agendamento por alunos</span><input type="checkbox" name="studentAllowed"></div>'+
+      '<div class="modal-actions"><button type="button" class="btn btn-ghost" data-close-modal>Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>'+
+    '</form>'
+  );
+}
+function modalNewUser(){
+  var roleOptions = Object.keys(ROLES).map(function(r){ return '<option value="'+r+'">'+ROLES[r].label+'</option>'; }).join('');
+  return modalWrap(
+    '<h3>Novo usuário</h3><div class="modal-sub">Crie uma conta de acesso ao sistema.</div>'+
+    '<form id="userForm">'+
+      '<div class="field"><label class="field-label">Nome completo</label><input class="input" name="name" required></div>'+
+      '<div class="field"><label class="field-label">Usuário (login)</label><input class="input" name="username" required autocapitalize="off" placeholder="ex: joao.silva"></div>'+
+      '<div class="field"><label class="field-label">Senha inicial</label><input class="input" name="password" type="text" required minlength="4" placeholder="Mínimo 4 caracteres"></div>'+
+      '<div class="field"><label class="field-label">Perfil</label><select class="input" name="role">'+roleOptions+'</select></div>'+
+      (state.formError ? '<div class="field-error">'+h(state.formError)+'</div>' : '')+
+      '<div class="modal-actions"><button type="button" class="btn btn-ghost" data-close-modal>Cancelar</button><button type="submit" class="btn btn-primary">Criar usuário</button></div>'+
+    '</form>'
+  );
+}
+function modalResetUser(){
+  var u = state.users.find(function(x){ return x.id===state.modalTarget; });
+  if (!u) return '';
+  return modalWrap(
+    '<h3>Redefinir senha</h3><div class="modal-sub">Defina uma nova senha temporária para <b>'+h(u.name)+'</b>.</div>'+
+    '<form id="resetForm">'+
+      '<div class="field"><label class="field-label">Nova senha</label><input class="input" name="password" type="text" required minlength="4"></div>'+
+      '<div class="modal-actions"><button type="button" class="btn btn-ghost" data-close-modal>Cancelar</button><button type="submit" class="btn btn-primary">Salvar nova senha</button></div>'+
+    '</form>'
+  );
+}
+function modalConfirmCancel(){
+  var b = state.bookings.find(function(x){ return x.id===state.modalTarget; });
+  if (!b) return '';
+  var p = periodById(b.periodId);
+  return modalWrap(
+    '<h3>Cancelar agendamento?</h3>'+
+    '<div class="modal-sub">'+h(roomName(b.roomId))+' · '+h(fmtDateLong(b.date))+' · '+(p?h(p.label):'')+'</div>'+
+    '<div class="modal-actions">'+
+      '<button type="button" class="btn btn-ghost" data-close-modal>Voltar</button>'+
+      '<button type="button" class="btn btn-danger-ghost" id="confirmCancelBtn">Sim, cancelar</button>'+
+    '</div>'
+  );
+}
+
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+function closeModal(){ state.modal=null; state.modalTarget=null; state.formError=''; render(); }
+
+function bindShellEvents(){
+  var root = $('#app');
+
+  // navegação
+  $all('[data-nav]', root).forEach(function(el){
+    el.addEventListener('click', function(){
+      state.view = el.getAttribute('data-nav');
+      state.drawerOpen = false;
+      if (state.view==='novo'){ state.newBooking = { date: todayISO(), periodId:null, roomId:null, note:'' }; }
+      render();
+      window.scrollTo({top:0});
+    });
+  });
+
+  var btnDrawer = $('#btnDrawer', root);
+  if (btnDrawer) btnDrawer.addEventListener('click', function(){
+    $('#mobileDrawer').classList.add('open');
+    $('#drawerBackdrop').classList.add('open');
+  });
+  var backdrop = $('#drawerBackdrop', root);
+  if (backdrop) backdrop.addEventListener('click', function(){
+    $('#mobileDrawer').classList.remove('open');
+    $('#drawerBackdrop').classList.remove('open');
+  });
+
+  var btnLogout = $('#btnLogout', root);
+  if (btnLogout) btnLogout.addEventListener('click', function(){
+    clearSession();
+    toast('Sessão encerrada.');
+    render();
+  });
+
+  // --- Novo agendamento ---
+  var bDate = $('#bDate', root);
+  if (bDate) bDate.addEventListener('change', function(){ state.newBooking.date = bDate.value || todayISO(); state.newBooking.periodId=null; render(); });
+  var bRoom = $('#bRoom', root);
+  if (bRoom) bRoom.addEventListener('change', function(){ state.newBooking.roomId = bRoom.value || null; state.newBooking.periodId=null; render(); });
+  $all('[data-period]', root).forEach(function(el){
+    el.addEventListener('click', function(){
+      if (el.disabled) return;
+      state.newBooking.periodId = el.getAttribute('data-period');
+      render();
+    });
+  });
+  var bookingForm = $('#bookingForm', root);
+  if (bookingForm) bookingForm.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    var noteEl = $('#bNote', root);
+    var nb = state.newBooking;
+    if (!nb.date || !nb.periodId || !nb.roomId) return;
+    if (isSlotTaken(nb.date, nb.periodId, nb.roomId)){ toast('Esse horário acabou de ser ocupado. Escolha outro.', 'err'); render(); return; }
+    var u = state.currentUser;
+    await dbAddBooking({
+      userId: u.username, userName: u.name, date: nb.date, periodId: nb.periodId,
+      roomId: nb.roomId, note: noteEl ? noteEl.value.trim() : '', status: 'confirmado', createdAt: Date.now()
+    });
+    toast('Agendamento confirmado com sucesso!');
+    state.view = 'meus';
+    state.newBooking = { date: todayISO(), periodId:null, roomId:null, note:'' };
+    render();
+  });
+
+  // --- Cancelamentos ---
+  $all('[data-cancel]', root).forEach(function(el){
+    el.addEventListener('click', function(){
+      state.modal = 'confirmCancel';
+      state.modalTarget = el.getAttribute('data-cancel');
+      render();
+    });
+  });
+
+  // --- Modais: abrir/fechar ---
+  $all('[data-open-modal]', root).forEach(function(el){
+    el.addEventListener('click', function(){ state.modal = el.getAttribute('data-open-modal'); state.formError=''; render(); });
+  });
+  $all('[data-close-modal]', root).forEach(function(el){ el.addEventListener('click', closeModal); });
+  var backdropModal = $('#modalBackdrop', root);
+  if (backdropModal) backdropModal.addEventListener('click', function(ev){ if (ev.target===backdropModal) closeModal(); });
+
+  var confirmCancelBtn = $('#confirmCancelBtn', root);
+  if (confirmCancelBtn) confirmCancelBtn.addEventListener('click', async function(){
+    var id = state.modalTarget;
+    await dbUpdateBooking(id, { status:'cancelado' });
+    toast('Agendamento cancelado.');
+    closeModal();
+  });
+
+  // --- Admin: salas ---
+  var roomForm = $('#roomForm', root);
+  if (roomForm) roomForm.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    var fd = new FormData(roomForm);
+    var name = (fd.get('name')||'').toString().trim();
+    if (!name) return;
+    await dbAddRoom({
+      name: name, description: (fd.get('description')||'').toString().trim(),
+      capacity: parseInt(fd.get('capacity'))||null, status:'ativo',
+      studentAllowed: fd.get('studentAllowed')==='on', createdAt: Date.now()
+    });
+    toast('Sala cadastrada.');
+    closeModal();
+  });
+  $all('[data-toggle-room]', root).forEach(function(el){
+    el.addEventListener('click', async function(){
+      var id = el.getAttribute('data-toggle-room');
+      var r = state.rooms.find(function(x){return x.id===id;});
+      if (!r) return;
+      await dbUpdateRoom(id, { status: r.status==='ativo' ? 'inativo' : 'ativo' });
+      toast('Status da sala atualizado.');
+      render();
+    });
+  });
+  $all('[data-delete-room]', root).forEach(function(el){
+    el.addEventListener('click', async function(){
+      var id = el.getAttribute('data-delete-room');
+      if (!confirm('Excluir esta sala? Esta ação não pode ser desfeita.')) return;
+      await dbDeleteRoom(id);
+      toast('Sala excluída.');
+      render();
+    });
+  });
+
+  // --- Admin: usuários ---
+  var userForm = $('#userForm', root);
+  if (userForm) userForm.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    var fd = new FormData(userForm);
+    var name = (fd.get('name')||'').toString().trim();
+    var username = (fd.get('username')||'').toString().trim().toLowerCase();
+    var password = (fd.get('password')||'').toString();
+    var role = (fd.get('role')||'professor').toString();
+    if (!name || !username || password.length<4){ state.formError='Preencha todos os campos (senha com ao menos 4 caracteres).'; render(); return; }
+    if (state.users.some(function(u){return u.username.toLowerCase()===username;})){ state.formError='Já existe um usuário com este login.'; render(); return; }
+    var salt = uid();
+    await dbAddUser({ username: username, name: name, role: role, status:'ativo', salt: salt, passwordHash: await hashPassword(password, salt), createdAt: Date.now() });
+    toast('Usuário criado com sucesso.');
+    closeModal();
+  });
+  $all('[data-toggle-user]', root).forEach(function(el){
+    el.addEventListener('click', async function(){
+      var id = el.getAttribute('data-toggle-user');
+      var u = state.users.find(function(x){return x.id===id;});
+      if (!u) return;
+      await dbUpdateUser(id, { status: u.status==='ativo' ? 'inativo' : 'ativo' });
+      toast('Status do usuário atualizado.');
+      render();
+    });
+  });
+  $all('[data-delete-user]', root).forEach(function(el){
+    el.addEventListener('click', async function(){
+      var id = el.getAttribute('data-delete-user');
+      if (!confirm('Excluir este usuário? Esta ação não pode ser desfeita.')) return;
+      await dbDeleteUser(id);
+      toast('Usuário excluído.');
+      render();
+    });
+  });
+  $all('[data-reset-user]', root).forEach(function(el){
+    el.addEventListener('click', function(){
+      state.modal = 'resetUser';
+      state.modalTarget = el.getAttribute('data-reset-user');
+      render();
+    });
+  });
+  var resetForm = $('#resetForm', root);
+  if (resetForm) resetForm.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    var fd = new FormData(resetForm);
+    var password = (fd.get('password')||'').toString();
+    if (password.length<4) return;
+    var id = state.modalTarget;
+    var salt = uid();
+    await dbUpdateUser(id, { salt: salt, passwordHash: await hashPassword(password, salt) });
+    toast('Senha redefinida com sucesso.');
+    closeModal();
+  });
+}
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+function boot(){
+  $('#app').innerHTML = '<div class="login-wrap"><div style="color:#fff;font-family:Inter,sans-serif;font-size:14px;">Carregando '+h(SCHOOL.shortName)+'…</div></div>';
+  initDb().then(function(){
+    if (LOCAL_MODE){ restoreSession(); render(); }
+    // no modo com banco de dados, a sessão é restaurada no primeiro snapshot de usuários
+  });
+}
+
+document.addEventListener('DOMContentLoaded', boot);
+if (document.readyState==='interactive' || document.readyState==='complete') boot();
+
+})();
+</script>
+</body>
+</html>
