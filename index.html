@@ -306,15 +306,18 @@ var FIREBASE_CONFIG = {
 };
 
 var PERIODS = [
-  {id:'p1', label:'1ª aula', start:'07:00', end:'07:50', shift:'Manhã'},
-  {id:'p2', label:'2ª aula', start:'07:50', end:'08:40', shift:'Manhã'},
-  {id:'p3', label:'3ª aula', start:'08:40', end:'09:30', shift:'Manhã'},
-  {id:'p4', label:'4ª aula', start:'09:50', end:'10:40', shift:'Manhã'},
-  {id:'p5', label:'5ª aula', start:'10:40', end:'11:30', shift:'Manhã'},
-  {id:'p6', label:'6ª aula', start:'13:00', end:'13:50', shift:'Tarde'},
-  {id:'p7', label:'7ª aula', start:'13:50', end:'14:40', shift:'Tarde'},
-  {id:'p8', label:'8ª aula', start:'14:40', end:'15:30', shift:'Tarde'},
-  {id:'p9', label:'9ª aula', start:'15:50', end:'16:40', shift:'Tarde'}
+ {id:'p1', label:'1ª aula', start:'07:00', end:'07:50', shift:'Manhã'},
+{id:'p2', label:'2ª aula', start:'07:50', end:'08:40', shift:'Manhã'},
+{id:'p3', label:'3ª aula', start:'08:40', end:'09:30', shift:'Manhã'},
+{id:'p4', label:'4ª aula', start:'09:50', end:'10:40', shift:'Manhã'},
+{id:'p5', label:'5ª aula', start:'10:40', end:'11:30', shift:'Manhã'},
+{id:'p6', label:'6ª aula', start:'11:30', end:'12:20', shift:'Manhã'},
+{id:'p7', label:'7ª aula', start:'13:00', end:'13:50', shift:'Tarde'},
+{id:'p8', label:'8ª aula', start:'13:50', end:'14:40', shift:'Tarde'},
+{id:'p9', label:'9ª aula', start:'14:40', end:'15:30', shift:'Tarde'},
+{id:'p10', label:'10ª aula', start:'15:50', end:'16:40', shift:'Tarde'},
+{id:'p11', label:'11ª aula', start:'16:40', end:'17:30', shift:'Tarde'},
+{id:'p12', label:'12ª aula', start:'17:30', end:'18:20', shift:'Tarde'}
 ];
 function periodById(id){ for (var i=0;i<PERIODS.length;i++){ if (PERIODS[i].id===id) return PERIODS[i]; } return null; }
 
